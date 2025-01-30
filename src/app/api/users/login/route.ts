@@ -3,8 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { connect } from "@/dbConfig/dbConfig";
+import type { ObjectId } from "mongoose";
 
 connect();
+
+export interface TokenData {
+   id: ObjectId;
+   email: string;
+   username: string;
+}
 
 export async function POST(request: NextRequest) {
    try {
@@ -33,14 +40,14 @@ export async function POST(request: NextRequest) {
       }
 
       // create token data
-      const TokenData = {
+      const tokenData: TokenData = {
          id: user._id,
          email: user.email,
          username: user.username,
       };
 
       // create token
-      const token = jwt.sign(TokenData, process.env.JWT_SECRET!, {
+      const token = jwt.sign(tokenData, process.env.JWT_SECRET!, {
          expiresIn: "1d",
       });
 
@@ -55,6 +62,7 @@ export async function POST(request: NextRequest) {
 
       // return response
       return response;
+      //
    } catch (error) {
       console.error(error);
       if (error instanceof Error) {
