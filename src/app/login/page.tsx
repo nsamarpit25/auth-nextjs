@@ -15,15 +15,15 @@ export default function LoginPage() {
       try {
          setIsLoading(true);
          const response = await axios.post("/api/users/login", user);
-         console.log(response.data);
          toast.success(response.data.message);
          router.push("/profile");
       } catch (error) {
          if (error instanceof AxiosError) {
-            toast.error(error.message);
+            toast.error(error.response?.data.message);
          }
          if (error instanceof Error) {
-            console.error(error.message);
+            console.log(error);
+            console.error("An error occurred:");
          }
       } finally {
          setIsLoading(false);

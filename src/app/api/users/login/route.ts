@@ -2,6 +2,9 @@ import User from "@/models/userModel";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { connect } from "@/dbConfig/dbConfig";
+
+connect();
 
 export async function POST(request: NextRequest) {
    try {
@@ -12,9 +15,10 @@ export async function POST(request: NextRequest) {
 
       // find user from the database
       const user = await User.findOne({ email });
+      // console.log("user not found");
       if (!user) {
          return NextResponse.json(
-            { message: "User does not exist", success: false },
+            { message: "Incorrect email id", success: false },
             { status: 404 }
          );
       }
