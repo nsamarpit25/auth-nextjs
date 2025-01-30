@@ -1,18 +1,47 @@
 "use client";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
    const [user, setUser] = useState({ email: "", password: "" });
    const router = useRouter();
+   const [isLoading, setIsLoading] = useState(false);
+   const [buttonDisabled, setButtonDisabled] = useState(false);
 
-   async function onLogin() {}
+   async function onLogin() {
+      try {
+         setIsLoading(true);
+         const response = await axios.post("/api/users/login", user);
+         console.log(response.data);
+         toast.success(response.data.message);
+         router.push("/profile");
+      } catch (error) {
+         if (error instanceof AxiosError) {
+            toast.error(error.message);
+         }
+         if (error instanceof Error) {
+            console.error(error.message);
+         }
+      } finally {
+         setIsLoading(false);
+      }
+   }
+
+   useEffect(() => {
+      if (user.email.length > 0 && user.password.length > 0) {
+         setButtonDisabled(false);
+      } else {
+         setButtonDisabled(true);
+      }
+   }, [user]);
 
    return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900 flex-col gap-6 p-8">
          <h1 className="text-center text-white text-3xl font-bold mb-4">
-            Login
+            {isLoading ? "Processing..." : "Login"}
          </h1>
 
          <div className="flex gap-4 flex-row items-center">
@@ -52,6 +81,7 @@ export default function LoginPage() {
          <button
             onClick={onLogin}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 mt-4"
+            disabled={buttonDisabled}
          >
             Sign Up
          </button>
