@@ -3,10 +3,12 @@ import User from "@/models/userModel";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
-export default async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
    try {
+      // get token from request body
       const { token } = await req.json();
 
+      // find user with the token
       const user = await User.findOne({
          verifyToken: token,
          verifyTokenExpiry: { $gt: Date.now() },
