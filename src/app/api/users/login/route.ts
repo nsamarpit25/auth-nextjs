@@ -8,7 +8,7 @@ import type { ObjectId } from "mongoose";
 connect();
 
 export interface TokenData {
-   id: ObjectId;
+   id: ObjectId | string;
    email: string;
    username: string;
 }
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
       // create token data
       const tokenData: TokenData = {
-         id: user._id,
+         id: user._id.toString(),
          email: user.email,
          username: user.username,
       };
